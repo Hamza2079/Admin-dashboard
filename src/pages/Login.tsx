@@ -133,7 +133,7 @@ export default function Login() {
 
           {/* Footer */}
           <div className="text-center text-sm text-gray-400">
-            <p>(sadmin@gmail.com,admin123)  for Super Admin</p>
+            <p>(sadmin@gmail.com,sadmin123)  for Super Admin</p>
             <p>(admin@gmail.com,admin123)  for Admin</p>
             <p>(user@gmail.com,user123)  for User</p>
           </div>

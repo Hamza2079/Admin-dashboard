@@ -58,13 +58,15 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
           {/* Navigation Links */}
           <nav className="flex-1 p-4 space-y-2">
-            <button
-              onClick={() => handleNavigate("/dashboard")}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors text-left"
-            >
-              <Home className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-700">Dashboard</span>
-            </button>
+            {isAdmin && (
+              <button
+                onClick={() => handleNavigate("/dashboard")}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 transition-colors text-left"
+              >
+                <Home className="w-5 h-5 text-gray-600" />
+                <span className="font-medium text-gray-700">Dashboard</span>
+              </button>
+            )}
 
             <button
               onClick={() => handleNavigate("/orders")}

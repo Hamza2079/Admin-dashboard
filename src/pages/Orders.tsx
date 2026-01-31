@@ -22,6 +22,7 @@ import {
   Banknote,
   Plus,
   Menu,
+  Home,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useOrders, useCreateOrder, useUpdateOrder } from "../hooks/useOrders";
@@ -36,7 +37,7 @@ export default function Orders() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // React Query hooks
-  const { data: orders = [], isLoading, error } = useOrders();
+  const { data: orders = [], isLoading, error, isFetching } = useOrders();
   const createOrderMutation = useCreateOrder();
   const updateOrderMutation = useUpdateOrder();
 
@@ -214,6 +215,16 @@ export default function Orders() {
                   <Plus className="w-4 h-4" />
                   <span className="hidden sm:inline">New Order</span>
                   <span className="sm:hidden">New</span>
+                </Button>
+              )}
+              {isAdmin && (
+                <Button
+                  onClick={() => navigate("/dashboard")}
+                  variant="outline"
+                  className="hidden md:flex items-center gap-2"
+                >
+                  <Home className="w-4 h-4" />
+                  Dashboard
                 </Button>
               )}
               <Button

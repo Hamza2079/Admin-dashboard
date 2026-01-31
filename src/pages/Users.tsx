@@ -9,6 +9,7 @@ import {
   CheckCircle,
   XCircle,
   Menu,
+  Home,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUsers, useUpdateUser } from "../hooks/useUsers";
@@ -23,7 +24,7 @@ export default function Users() {
   const navigate = useNavigate();
 
   // React Query hooks
-  const { data: users = [], isLoading, error } = useUsers();
+  const { data: users = [], isLoading, error, isFetching } = useUsers();
   const updateUserMutation = useUpdateUser();
 
   // Mobile menu state
@@ -127,6 +128,14 @@ export default function Users() {
               </div>
             </div>
             <div className="flex items-center gap-2 md:gap-3">
+              <Button
+                onClick={() => navigate("/dashboard")}
+                variant="outline"
+                className="hidden md:flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Dashboard
+              </Button>
               <Button
                 onClick={handleLogout}
                 variant="outline"

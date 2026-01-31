@@ -13,9 +13,20 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // React Query hooks
-  const { data: orders = [] } = useOrders();
-  const { data: users = [] } = useUsers();
+  // React Query hooks with loading states
+  const {
+    data: orders = [],
+    isLoading: ordersLoading,
+    isFetching: ordersFetching,
+  } = useOrders();
+  const {
+    data: users = [],
+    isLoading: usersLoading,
+    isFetching: usersFetching,
+  } = useUsers();
+
+  const isLoading = ordersLoading || usersLoading;
+  const isFetching = ordersFetching || usersFetching;
 
   const handleLogout = () => {
     logout();
@@ -71,112 +82,138 @@ export default function Dashboard() {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mb-4"></div>
+            <p className="text-gray-600 font-medium">Loading dashboard...</p>
+          </div>
+        )}
+
+        {/* Refetching Indicator */}
+        {!isLoading && isFetching && (
+          <div className="fixed top-20 right-4 bg-purple-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 z-30">
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            <span className="text-sm font-medium">Updating...</span>
+          </div>
+        )}
+
         {/* Stats Grid - 2 cols on mobile, 4 on desktop */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-          {/* Total Users Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-2 md:mb-0">
-                <p className="text-xs md:text-sm font-medium text-gray-600">
-                  Total Users
-                </p>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
-                  {users.length}
-                </p>
-              </div>
-              <div className="p-2 md:p-3 bg-blue-100 rounded-lg self-start md:self-auto">
-                <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
+        {!isLoading && (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+            {/* Total Users Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-2 md:mb-0">
+                  <p className="text-xs md:text-sm font-medium text-gray-600">
+                    Total Users
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
+                    {users.length}
+                  </p>
+                </div>
+                <div className="p-2 md:p-3 bg-blue-100 rounded-lg self-start md:self-auto">
+                  <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-600" />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Total Orders Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-2 md:mb-0">
-                <p className="text-xs md:text-sm font-medium text-gray-600">
-                  Total Orders
-                </p>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
-                  {orders.length}
-                </p>
-              </div>
-              <div className="p-2 md:p-3 bg-purple-100 rounded-lg self-start md:self-auto">
-                <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-purple-600" />
+            {/* Total Orders Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-2 md:mb-0">
+                  <p className="text-xs md:text-sm font-medium text-gray-600">
+                    Total Orders
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
+                    {orders.length}
+                  </p>
+                </div>
+                <div className="p-2 md:p-3 bg-purple-100 rounded-lg self-start md:self-auto">
+                  <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-purple-600" />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Pending Orders Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-2 md:mb-0">
-                <p className="text-xs md:text-sm font-medium text-gray-600">
-                  Pending
-                </p>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
-                  {orders.filter((order) => order.status === "pending").length}
-                </p>
-              </div>
-              <div className="p-2 md:p-3 bg-yellow-100 rounded-lg self-start md:self-auto">
-                <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-yellow-600" />
+            {/* Pending Orders Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-2 md:mb-0">
+                  <p className="text-xs md:text-sm font-medium text-gray-600">
+                    Pending
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
+                    {
+                      orders.filter((order) => order.status === "pending")
+                        .length
+                    }
+                  </p>
+                </div>
+                <div className="p-2 md:p-3 bg-yellow-100 rounded-lg self-start md:self-auto">
+                  <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-yellow-600" />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Shipped Orders Card */}
-          <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-              <div className="mb-2 md:mb-0">
-                <p className="text-xs md:text-sm font-medium text-gray-600">
-                  Shipped
-                </p>
-                <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
-                  {orders.filter((order) => order.status === "shipped").length}
-                </p>
-              </div>
-              <div className="p-2 md:p-3 bg-green-100 rounded-lg self-start md:self-auto">
-                <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
+            {/* Shipped Orders Card */}
+            <div className="bg-white rounded-xl shadow-sm border p-4 md:p-6 hover:shadow-md transition-shadow">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div className="mb-2 md:mb-0">
+                  <p className="text-xs md:text-sm font-medium text-gray-600">
+                    Shipped
+                  </p>
+                  <p className="text-2xl md:text-3xl font-bold text-gray-900 mt-1 md:mt-2">
+                    {
+                      orders.filter((order) => order.status === "shipped")
+                        .length
+                    }
+                  </p>
+                </div>
+                <div className="p-2 md:p-3 bg-green-100 rounded-lg self-start md:self-auto">
+                  <ShoppingCart className="w-6 h-6 md:w-8 md:h-8 text-green-600" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Quick actions */}
-        <div className="mt-6 md:mt-8">
-          <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">
-            Quick Actions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-            {isAdmin && (
+        {!isLoading && (
+          <div className="mt-6 md:mt-8">
+            <h2 className="text-lg md:text-xl font-semibold text-gray-900 mb-3 md:mb-4">
+              Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+              {isAdmin && (
+                <Button
+                  onClick={() => navigate("/users")}
+                  className="h-auto py-4 md:py-4 justify-start bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-left"
+                >
+                  <Users className="w-5 h-5 mr-3 flex-shrink-0" />
+                  <div className="text-left">
+                    <div className="font-semibold">Manage Users</div>
+                    <div className="text-xs opacity-90">
+                      View and edit user accounts
+                    </div>
+                  </div>
+                </Button>
+              )}
+
               <Button
-                onClick={() => navigate("/users")}
-                className="h-auto py-4 md:py-4 justify-start bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-left"
+                onClick={() => navigate("/orders")}
+                className="h-auto py-4 md:py-4 justify-start bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-left"
               >
-                <Users className="w-5 h-5 mr-3 flex-shrink-0" />
+                <ShoppingCart className="w-5 h-5 mr-3 flex-shrink-0" />
                 <div className="text-left">
-                  <div className="font-semibold">Manage Users</div>
+                  <div className="font-semibold">View Orders</div>
                   <div className="text-xs opacity-90">
-                    View and edit user accounts
+                    Track and manage orders
                   </div>
                 </div>
               </Button>
-            )}
-
-            <Button
-              onClick={() => navigate("/orders")}
-              className="h-auto py-4 md:py-4 justify-start bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-left"
-            >
-              <ShoppingCart className="w-5 h-5 mr-3 flex-shrink-0" />
-              <div className="text-left">
-                <div className="font-semibold">View Orders</div>
-                <div className="text-xs opacity-90">
-                  Track and manage orders
-                </div>
-              </div>
-            </Button>
+            </div>
           </div>
-        </div>
+        )}
       </main>
 
       {/* Mobile Bottom Navigation */}
